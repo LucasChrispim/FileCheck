@@ -1,0 +1,165 @@
+package vehiclechecher;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Scanner;
+
+/**
+ *
+ * @author lucas
+ */
+public class VehicleChecher {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws FileNotFoundException {
+            //Using Scanner to read from the file
+            //Using Try Catch to print any error
+            String status = "status.txt"; //where gonna be saved the new file
+            try{             
+            
+            //Writing the file and overwriting any previous data
+            BufferedWriter filewriter = new BufferedWriter(new FileWriter(status,false));
+                
+                
+            //Saving the data from the file into the string "file" 
+            Scanner file = new Scanner(new FileReader("C:\\Users\\lucas\\Documents\\NetBeansProjects\\VehicleChecher\\vehicle.txt"));
+            
+            
+            
+                //Using conditional "IF" and "hasNextLine" to check if the file is empty and print error message if thats the case
+                if(file.hasNextLine()){
+                    String firstline = file.nextLine();//Saving the first line of the data from the file into the string  
+            
+                    //Using "Split" to return an array to get the brand and name and test it
+                    String[] brandarray = firstline.split(" ");
+                    String brand = brandarray[0];//brand receive the brand of the car
+                    String name = brandarray[1];// name receive the model of the car
+                
+                    //Using MATCHES to check if there is any numbers at the brand name
+                    if(brand.matches("[0-9]+")){    
+                        System.out.println("The Brand name isn´t supost to have numbers");//Printing ERROR
+                        
+                    }
+                    else{
+                    
+                        //Using MATCHES to check if the name is sapareted of the brand and if contain any special char
+                        if(name.matches("[a-zA-Z0-9]*")){
+                            try{
+                                //Going to use another scanner to create a new Int from the file
+                                Scanner passengers = new Scanner(new FileReader("C:\\Users\\lucas\\Documents\\NetBeansProjects\\VehicleChecher\\vehicle.txt"));
+                                int numberpassengers = -1;//Just initiate with a impossible value
+                                
+                                while(passengers.hasNextLine()){//Saving the whole data into a string
+                                    String strage = passengers.nextLine();
+                                    int count=0;//using count to determine when the data will be printed in the TXT file and make the plate and brand be printed first   
+                                    while(count<6){
+                                
+                                        if(count==5){//When the count has the value 5, will print this data after the plate and brand
+                                            if(strage.matches("[0-9]*")){ //checking for number matches
+                                                numberpassengers = Integer.parseInt(strage);// converting string into integer
+                                                //After finding out the int of seats, now we gonna check if the number is bigger than 1 and bellow 8
+                                                if(numberpassengers >= 1 && numberpassengers <=8){
+                                                    if(numberpassengers == 1){
+                                                        String Type = "Racing Car\n";
+                                                        filewriter.write(Type);
+                                                    }           
+                                                    else if(numberpassengers == 2){
+                                                        String Type ="Sports Car\n";
+                                                        filewriter.write(Type);
+                                                    }
+                                                    else if((numberpassengers >=3) || (numberpassengers <=5)){
+                                                        String Type ="Saloon\n";
+                                                        filewriter.write(Type);
+                                                    }
+                                                    else if(numberpassengers >=6 ){
+                                                        String Type="SUV\n";
+                                                        filewriter.write(Type);
+                                                    }
+                                        
+                                                    }
+                                                    else{System.out.println("The number of seats are wrong");
+                                                    }
+                                            } 
+                                        } 
+                             
+                                
+                                        if(count==4){
+                                            //checking the plate separeting by the size first
+                                            if(strage.length()>= 6 ){ 
+                                                String sub = strage;
+                                                if(sub.matches("[a-zA-Z0-9]*")){ //
+                                                    String plate = sub;
+                                                    //Writing the info at the new file,thisdata shuld be printed first than number of passengers at the first line
+                                                    filewriter.write(plate); filewriter.write("-"); filewriter.write(name);
+                                                    //Separeting all the variables to be checked
+                                                    String first3numb = plate.substring(0,3);//contein only the first 3 letters
+                                                    String lastnumb = plate.substring(6);// has only the last number after the 6
+                                                    String lastnum5 = plate.substring(5);//has only numbers after the 5
+                                                    String [] letter = plate.split("");
+                                                    String letter4 = letter[3];// has only the 4th letter
+                                                    String letter4UP = letter4.toUpperCase();//changing all the data to upper case to facilitate the next checking
+                                                    String letter5 = letter[4];//the 5th char
+                                                    String letter5UP = letter5.toUpperCase();
+                                        
+                                                    if(first3numb.matches("[0-9]+")){//checking the first 3 positions if is a number or letter
+                                                        if(letter4UP.matches("[A-Z]+")){//checking if the 4th number is only letters
+                                                            if(letter5.matches("[A-Z]+")){//checking if the 5th position is letter or number
+                                                                System.out.println("The 5th position is a letter");
+                                                                if(lastnumb.matches("[0-9]+")){//checking if the last numbers after the 5th number
+                                                                    System.out.println("The data is correct");
+                                                                }
+                                                                    else{System.out.println("The last  after the 6th number has letter");
+                                                                    }
+                                                                }
+                                                            else{//This means the 5th position is a number
+                                                                System.out.println("The 5th position is a number");
+                                                                if(lastnum5.matches("[0-9]+")){//checking if there all positions is numbers after the 4th position
+                                                                    System.out.println("The data is correct");
+                                                                }
+                                                                    else{
+                                                                            System.out.println("The last after the 5th number has letter");
+                                                                    }
+                                                            }
+                                                        }
+                                                        else{
+                                                            System.out.println("The 4th char is a number");
+                                                        }
+                                                    }
+                                                    else{
+                                                        System.out.println("The first 3 positions has letter");
+                                                    }
+                                                }
+                                            }
+                                        }
+                              
+                             
+                            
+                                
+                                
+                                    count++; 
+                                    }
+                                }         
+                            }    
+                            catch(Exception e){
+                            System.out.println("ERROR at number of passengers");//Printing a ERROR
+                            }
+                        }
+                        else{
+                            System.out.println("The name contain characters different than nubers and letters");//Printing a ERROR
+                        }
+                    }
+                
+                 }
+                    else{System.out.println("The File is EMPTY");//Printing a ERROR
+                }
+            
+                    filewriter.close();//closing the file writen and saving at TXT file
+            }catch(Exception e){
+                                System.out.println("ERROR");//Printing a ERROR
+            }
+        }}
